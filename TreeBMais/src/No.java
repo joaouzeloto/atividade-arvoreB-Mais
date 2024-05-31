@@ -1,6 +1,6 @@
 public class No
 {
-    static final int N = 4;
+    static final int N = 5;
     private int[] vInfo;
     private No[] vLig;
     private int tl;
