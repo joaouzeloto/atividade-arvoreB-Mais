@@ -4,7 +4,7 @@ public class TreeMais
 
     public TreeMais(){raiz = null;}
 
-    private No navegarAteFolha(int info)
+    public No navegarAteFolha(int info)
     {
         int pos;
         No aux = raiz;
@@ -54,14 +54,14 @@ public class TreeMais
         if(folha.getvLig(0)==null)
         {
             NoList cx1,cx2;
-            posPai =  pai.procuraPosicao(folha.getvInfo(1));
+            posPai =  pai.procuraPosicao(folha.getvInfo(0));
             if(posPai>0)
                 irmaE = pai.getvLig(posPai-1);
             if(posPai+1<=pai.getTl())
                 irmaD =pai.getvLig(posPai+1);
              cx1 = new NoList();
              cx2 = new NoList();
-             conta = (int) Math.ceil((No.N-1)/2);
+             conta = (int) Math.ceil((No.N-1)/2.0);
 
             for(int i=0;i<conta;i++)
             {
@@ -105,7 +105,7 @@ public class TreeMais
             No cx1, cx2;
             cx1 = new No();
             cx2 = new No();
-            conta = (int) Math.ceil((No.N)/2-1);
+            conta = (int) Math.ceil((No.N)/2.0-1);
             for(int i=0;i<conta;i++)
             {
                 cx1.setvInfo(i,folha.getvInfo(i));
@@ -216,10 +216,195 @@ public class TreeMais
                 exibirTudo(raizI.getvLig(i));
         }
     }
+
     public void exibirTudo()
     {
         exibirTudo(raiz);
     }
+
+    public void excluirElemento(int ele)
+    {
+        No pai;
+        NoList aux = (NoList) navegarAteFolha(ele);
+        int pos = aux.procuraPosicao2(ele);
+        System.out.println(pos);
+        aux.remanejarExclusao(pos);
+        aux.setTl(aux.getTl()-1);
+        pai = aux;
+        pai = localizarPai(aux,aux.getvInfo(0));
+        pai.setvInfo(0,aux.getvInfo(0));
+        if(aux.getTl()<(No.N/2.0)-1)
+            redistribuirConcatenar(aux,localizarPai(aux,aux.getvInfo(0)));
+        procurarExcluir(ele);
+    }
+
+    public void redistribuirConcatenar(No folha,No pai)
+    {
+        int posPai;
+
+        if(folha instanceof NoList)
+        {
+            NoList irmaE = null, irmaD = null;
+            posPai = pai.procuraPosicao(folha.getvInfo(0));
+            if(posPai>0)
+                irmaE = (NoList) pai.getvLig(posPai-1);
+            if(posPai+1<=pai.getTl())
+                irmaD = (NoList) pai.getvLig(posPai+1);
+            if(irmaE!=null&&irmaE.getTl()>Math.ceil(No.N/2.0)-1)
+            {
+                if(posPai>0)
+                    pai.setvInfo(posPai-1,irmaE.getTl()-1);
+                else
+                    pai.setvInfo(posPai,irmaE.getTl()-1);
+                folha.remanejar(0);
+                folha.setvInfo(0,pai.getvInfo(posPai));
+                folha.setTl(folha.getTl()+1);
+                irmaE.setTl(irmaE.getTl()-1);
+            }
+            else
+            {
+                if(irmaD!=null&&irmaD.getTl()>Math.ceil(No.N/2.0)-1)
+                {
+                    folha.setvInfo(folha.getTl(),irmaD.getvInfo(0));
+                    irmaD.remanejarExclusao(0);
+                    irmaD.setTl(irmaD.getTl()-1);
+                    folha.setTl(folha.getTl()+1);
+                    if(posPai>0)
+                        pai.setvInfo(posPai-1, folha.getvInfo(folha.getTl()-1));
+                    else
+                        pai.setvInfo(posPai, folha.getvInfo(folha.getTl()-1));
+                }
+                else
+                {
+                    if(irmaE!=null)
+                    {
+                        for(int i= 0;i<folha.getTl();i++)
+                        {
+                            irmaE.setvInfo(irmaE.getTl(),folha.getvInfo(i));
+                            irmaE.setTl(irmaE.getTl()+1);
+                        }
+                        irmaE.setProx(irmaD);
+                        if(irmaD!=null)
+                            irmaD.setAnt(irmaE);
+                        if(posPai>0)
+                        {
+                            pai.remanejarExclusao(posPai-1);
+                            pai.setvLig(posPai-1,irmaE);
+                        }
+
+                        else
+                        {
+                            pai.remanejarExclusao(posPai);
+                            pai.setvLig(posPai,irmaE);
+                        }
+                    }
+                    else
+                    {
+                        if(irmaD!=null)
+                        {
+                            for(int i=folha.getTl()-1;i>=0;i--)
+                            {
+                                irmaD.remanejar(0);
+                                irmaD.setvInfo(0,folha.getvInfo(i));
+                            }
+                            irmaD.setAnt(irmaE);
+                            if(irmaE!=null)
+                                irmaE.setProx(irmaD);
+                            if(posPai>0)
+                                pai.remanejarExclusao(posPai-1);
+                            else
+                                pai.remanejarExclusao(posPai);
+                        }
+                    }
+                }
+            }
+            if(pai.getTl()<Math.ceil(No.N/2.0)-1)
+                redistribuirConcatenar(pai,localizarPai(pai,pai.getvInfo(0)));
+        }
+        else
+        {
+            No irmaE = null, irmaD = null;
+            posPai = pai.procuraPosicao2(folha.getvInfo(0));
+            if(posPai>0)
+                irmaE =  pai.getvLig(posPai-1);
+            if(posPai+1<=pai.getTl())
+                irmaD =  pai.getvLig(posPai+1);
+
+            if(irmaE!=null&&irmaE.getTl()>Math.ceil(No.N/2.0)-1)
+            {
+                folha.remanejar(0);
+                folha.setvInfo(0,pai.getvInfo(posPai));
+                folha.setvLig(0,irmaE.getvLig(irmaE.getTl()));
+                pai.setvInfo(posPai,irmaE.getvInfo(irmaE.getTl()-1));
+                irmaE.setTl(irmaE.getTl()-1);
+                folha.setTl(folha.getTl()+1);
+            }
+            else
+            {
+                if(irmaD!=null&&irmaD.getTl()>Math.ceil(No.N/2.0)-1)
+                {
+                    folha.setvInfo(folha.getTl(),pai.getvInfo(posPai));
+                    folha.setTl(folha.getTl()+1);
+                    pai.setvInfo(posPai,irmaD.getvInfo(0));
+                    folha.setvLig(folha.getTl(),pai.getvLig(0));
+                    irmaD.remanejarExclusao(0);
+                    irmaD.setTl(irmaD.getTl()-1);
+                }
+                else
+                {
+                    if(irmaE!=null)
+                    {
+                        irmaE.setvInfo(irmaE.getTl(),pai.getvInfo(posPai-1));
+                        irmaE.setTl(irmaE.getTl()+1);
+
+                        pai.remanejarExclusao(posPai-1);
+                        pai.setTl(pai.getTl()-1);
+                        pai.setvLig(posPai-1,irmaE);
+
+                        for(int i=0;i<folha.getTl();i++)
+                        {
+                            irmaE.setvInfo(irmaE.getTl(),pai.getvInfo(i));
+                            irmaE.setvLig(irmaE.getTl(),pai.getvLig(i));
+                            irmaE.setTl(irmaE.getTl()+1);
+                        }
+                        irmaE.setvLig(irmaE.getTl(),folha.getvLig(folha.getTl()));
+                    }
+                    else
+                    {
+                        if(irmaD!=null)
+                        {
+                            irmaD.remanejar(0);
+                            irmaD.setvInfo(0, pai.getvInfo(posPai));
+                            irmaD.setTl(irmaD.getTl()+1);
+
+                            pai.remanejarExclusao(posPai);
+                            pai.setTl(pai.getTl()-1);
+                            pai.setvLig(posPai,irmaD);
+
+                            for(int i=folha.getTl()-1;i>=0;i--)
+                            {
+                                irmaD.remanejar(0);
+                                irmaD.setvInfo(0,folha.getvInfo(i));
+                                irmaD.setvLig(1,folha.getvLig(i+1));
+                                irmaD.setTl(irmaD.getTl()+1);
+                            }
+                            irmaD.setvLig(0,folha.getvLig(0));
+                        }
+                        if(pai==raiz&&pai.getTl()==0)
+                            if (irmaE!=null)
+                                raiz = irmaE;
+                            else
+                                raiz = irmaD;
+                    }
+                }
+            }
+            if(pai.getTl()<Math.ceil(No.N/2.0)-1)
+                redistribuirConcatenar(pai,localizarPai(pai,pai.getvInfo(0)));
+        }
+    }
+
+    public void procurarExcluir(int ele){}
+
 
 
 }

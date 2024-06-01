@@ -1,6 +1,7 @@
 public class No
 {
     static final int N = 5;
+    static final Double ND = 5.0;
     private int[] vInfo;
     private No[] vLig;
     private int tl;
@@ -46,9 +47,27 @@ public class No
     public int procuraPosicao(int info)
     {
         int pos = 0;
+        while (pos<tl&&info>=vInfo[pos])
+            pos++;
+        return pos;
+    }
+
+    public int procuraPosicao2(int info)
+    {
+        int pos = 0;
         while (pos<tl&&info>vInfo[pos])
             pos++;
         return pos;
+    }
+
+    public void remanejarExclusao(int pos)
+    {
+        for(int i=pos;i<tl;i++)
+        {
+            vInfo[i]= vInfo[i+1];
+            vLig[i]=vLig[i+1];
+        }
+        vLig[tl-1] = vLig[tl];
     }
 
     public void remanejar(int pos)
