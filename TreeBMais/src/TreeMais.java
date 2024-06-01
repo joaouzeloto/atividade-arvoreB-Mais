@@ -4,7 +4,7 @@ public class TreeMais
 
     public TreeMais(){raiz = null;}
 
-    public No navegarAteFolha(int info)
+    private No navegarAteFolha(int info)
     {
         int pos;
         No aux = raiz;
@@ -16,7 +16,7 @@ public class TreeMais
         return aux;
     }
 
-    public No localizarPai(No folha, int info)
+    private No localizarPai(No folha, int info)
     {
         No no, pai;
         int pos;
@@ -30,23 +30,8 @@ public class TreeMais
         return pai;
     }
 
-    public No localizarSubE(No no,int info)
-    {
-        no = no.getvLig(info);
-        while (no.getvLig(0)!=null)
-            no = no.getvLig(no.getTl()-1);
-        return no;
-    }
 
-    public No localizarSubD(No no,int info)
-    {
-        no = no.getvLig(info);
-        while (no.getvLig(0)!=null)
-            no = no.getvLig(0);
-        return no;
-    }
-
-    public void split(No folha,No pai)
+    private void split(No folha,No pai)
     {
         int posPai,conta;
         No irmaD=null,irmaE=null;
@@ -173,7 +158,6 @@ public class TreeMais
         int sinal = 0;
         NoList auxList = null;
 
-        // Percorre até o nó mais à esquerda
         while (aux.getvLig(0) != null)
         {
             pai = aux;
@@ -209,11 +193,26 @@ public class TreeMais
     {
         if(raizI!=null)
         {
+            if(raizI.getvLig(0)==null)
+                System.out.print("folha: ");
+            else
+                System.out.print("nao folha:");
             for(int i=0;i<raizI.getTl();i++)
-                System.out.print(raizI.getvInfo(i)+" ");
+                    System.out.print(raizI.getvInfo(i)+" ");
             System.out.println();
             for(int i=0;i<=raizI.getTl();i++)
                 exibirTudo(raizI.getvLig(i));
+        }
+    }
+
+    private void listarFolhas(No raizI,Fila fila)
+    {
+        if(raizI!=null)
+        {
+            if(raizI.getvLig(0)==null)
+                fila.inserir((NoList) raizI);
+            for(int i=0;i<=raizI.getTl();i++)
+                listarFolhas(raizI.getvLig(i),fila);
         }
     }
 
@@ -222,83 +221,19 @@ public class TreeMais
         exibirTudo(raiz);
     }
 
-    public NoList navegarAteFolhaPorListas(int ele)
+    private void conectarListas()
     {
-        No aux = raiz,pai=null;
-        NoList auxList;
-        if(raiz!=null)
+        NoList ax1=null, ax2=null;
+        Fila fila = new Fila();
+        listarFolhas(raiz,fila);
+        if(!fila.vazio())
+            ax1 = fila.retirar();
+        while(!fila.vazio())
         {
-            while (aux.getvLig(0)!=null)
-            {
-                pai = aux;
-                aux = aux.getvLig(0);
-            }
-
-                if (pai != null && pai.getvLig(0) instanceof NoList)
-                {
-                    auxList = (NoList) pai.getvLig(0);
-                    while(auxList!=null)
-                    {
-                        if(ele>=auxList.getvInfo(0)&&ele<=auxList.getvInfo(aux.getTl()-1))
-                            return auxList;
-                        else
-                            auxList = auxList.getProx();
-                    }
-                    return null;
-                }
-                return (NoList) aux;
-
-        }
-        return null;
-    }
-
-    public void conectarListas() {
-        if (raiz == null || raiz.getvLig(0) == null) {
-            return;
-        }
-
-        No aux = raiz;
-        No esq, dir;
-        No pai;
-
-        for (int i = 0; i < aux.getTl(); i++) {
-            esq = aux.getvLig(i);
-            while (esq.getvLig(0) != null) {
-                esq = esq.getvLig(esq.getTl());
-            }
-
-            NoList n1 = (NoList) esq;
-
-            if (i + 1 < aux.getTl()) {
-                dir = aux.getvLig(i + 1);
-                while (dir.getvLig(0) != null) {
-                    dir = dir.getvLig(0);
-                }
-
-                NoList n2 = (NoList) dir;
-
-                n1.setProx(n2);
-                n2.setAnt(n1);
-            }
-        }
-
-        // Conectar o último nó da última folha
-        esq = aux.getvLig(aux.getTl());
-        while (esq.getvLig(0) != null) {
-            esq = esq.getvLig(esq.getTl());
-        }
-
-        NoList n1 = (NoList) esq;
-        if (n1.getProx() == null && aux.getvLig(aux.getTl() + 1) != null) {
-            dir = aux.getvLig(aux.getTl() + 1);
-            while (dir.getvLig(0) != null) {
-                dir = dir.getvLig(0);
-            }
-
-            NoList n2 = (NoList) dir;
-
-            n1.setProx(n2);
-            n2.setAnt(n1);
+            ax2 = fila.retirar();
+            ax1.setProx(ax2);
+            ax2.setAnt(ax1);
+            ax1 = ax2;
         }
     }
 
@@ -328,7 +263,7 @@ public class TreeMais
         }
     }
 
-    public void redistribuirConcatenar(No folha,No pai)
+    private void redistribuirConcatenar(No folha,No pai)
     {
         int posPai;
 

@@ -2,8 +2,12 @@ public class Main
 {
     public static void main(String[] args) {
         TreeMais tree = new TreeMais();
+
+        //insecao
         for(int i=1;i<25;i++)
             tree.inserir(i);
+
+        //esclusao
         tree.excluirElemento(21);
         tree.excluirElemento(22);
         tree.excluirElemento(3);
@@ -11,6 +15,9 @@ public class Main
         tree.excluirElemento(4);
         tree.excluirElemento(11);
         tree.excluirElemento(14);
+        tree.excluirElemento(8);
+        tree.excluirElemento(2);
+
         System.out.println("\n----------------------In-Ordem---------------------------");
         tree.exibirTudo();
         System.out.println("\n----------------------Exibindo-Listas-------------------------");

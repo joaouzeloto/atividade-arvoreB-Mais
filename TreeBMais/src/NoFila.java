@@ -1,13 +1,33 @@
 public class NoFila
 {
-    private NoList inicio, fim;
+    private NoList no;
+    private NoFila proximo;
 
-    NoFila()
-    {
-        inicio = fim = null;
+    public NoFila getAnt() {
+        return ant;
     }
 
-    public void inserir()
+    public void setAnt(NoFila ant) {
+        this.ant = ant;
+    }
 
+    private NoFila ant;
 
+    public NoFila(NoList noI){no=noI;proximo=null;}
+
+    public NoList getNo() {
+        return no;
+    }
+
+    public void setNo(NoList no) {
+        this.no = no;
+    }
+
+    public NoFila getProximo() {
+        return proximo;
+    }
+
+    public void setProximo(NoFila proximo) {
+        this.proximo = proximo;
+    }
 }
