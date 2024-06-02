@@ -243,7 +243,7 @@ public class TreeMais
         NoList aux = (NoList) navegarAteFolha(ele);
         No pai;
         int pos = aux.procuraPosicao2(ele);
-        if(aux.getvInfo(pos)==ele)
+        if(aux.getvInfo(pos)==ele&&pos<No.N)
         {
             aux.remanejarExclusao(pos);
             aux.setTl(aux.getTl()-1);
@@ -278,7 +278,7 @@ public class TreeMais
             if(irmaE!=null&&irmaE.getTl()>Math.ceil(No.N/2.0)-1)
             {
                 folha.remanejar(0);
-                folha.setvInfo(0,irmaE.getvInfo(irmaE.getTl()));
+                folha.setvInfo(0,irmaE.getvInfo(irmaE.getTl()-1));
                 folha.setTl(folha.getTl()+1);
                 irmaE.setTl(irmaE.getTl()-1);
                 if(posPai>0)
@@ -300,7 +300,7 @@ public class TreeMais
                 {
                     if(irmaE!=null)
                     {
-                        for(int i= 0;i<folha.getTl();i++)
+                        for(int i= 0;i<folha.getTl()&&irmaE.getTl()<No.N;i++)
                         {
                             irmaE.setvInfo(irmaE.getTl(),folha.getvInfo(i));
                             irmaE.setTl(irmaE.getTl()+1);
@@ -329,6 +329,7 @@ public class TreeMais
                             {
                                 irmaD.remanejar(0);
                                 irmaD.setvInfo(0,folha.getvInfo(i));
+                                irmaD.setTl(irmaD.getTl()+1);
                             }
                             irmaD.setAnt(irmaE);
                             if(irmaE!=null)
@@ -386,7 +387,7 @@ public class TreeMais
                             pai.remanejarExclusao(posPai-1);
                             pai.setTl(pai.getTl()-1);
                             pai.setvLig(posPai-1,irmaE);
-                            for(int i=0;i<folha.getTl();i++)
+                            for(int i=0;i<folha.getTl()&&irmaE.getTl()<No.N;i++)
                             {
                                 irmaE.setvInfo(irmaE.getTl(),folha.getvInfo(i));
                                 irmaE.setvLig(irmaE.getTl(),folha.getvLig(i));
